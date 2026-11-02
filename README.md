@@ -14,6 +14,7 @@ I use the same sequential model as the course's digit problem. My first runs gav
 I realized that I did not normalize the RGB value from 0-255 to 0-1. I added the line:
   images = np.array(images) / 255.0, 
 the accuracy increased to 96% - good enough:
+
   Epoch 10/10
   500/500 ━━━━━━━━━━━━━━━━━━━━ 6s 12ms/step - accuracy: 0.8642 - loss: 0.4239 
   333/333 - 2s - 6ms/step - accuracy: 0.9567 - loss: 0.1801
