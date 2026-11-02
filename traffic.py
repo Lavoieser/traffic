@@ -3,7 +3,6 @@ import numpy as np
 import os
 import sys
 import tensorflow as tf
-from pathlib import Path
 
 from sklearn.model_selection import train_test_split
 
@@ -29,8 +28,13 @@ def main():
         np.array(images), np.array(labels), test_size=TEST_SIZE
     )
 
+    print(f"labels.shape {labels.shape}")
+
     # Get a compiled neural network
     model = get_model()
+
+    #print("x_train shape:", x_train.shape)
+    #print("y_train shape:", y_train.shape)
 
     # Fit model on training data
     model.fit(x_train, y_train, epochs=EPOCHS)
@@ -61,14 +65,11 @@ def load_data(data_dir):
     images = []
     labels = []
 
-    #for category in range(NUM_CATEGORIES):
-    for category in range(3):
+    for category in range(NUM_CATEGORIES):
         category_path = os.path.join(data_dir, str(category))
 
         for filename in os.listdir(category_path):
-
             image_path = os.path.join(category_path, filename)
-
             image = cv2.imread(image_path)
             image = cv2.resize(
                 image,
@@ -77,6 +78,9 @@ def load_data(data_dir):
             images.append(image)
             labels.append(category)
 
+    # Normalize values 0 to 1 instead of 0 to 255
+    images = np.array(images) / 255.0
+    
     return images, labels
     #raise NotImplementedError
 
@@ -87,10 +91,38 @@ def get_model():
     `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
     The output layer should have `NUM_CATEGORIES` units, one for each category.
     """
-    
-    sys.exit()
-    #raise NotImplementedError
+    # Create a convolutional neural network
+    model = tf.keras.models.Sequential([
+        tf.keras.Input(shape=(IMG_WIDTH, IMG_HEIGHT, 3)),
 
+    # Convolutional layer. Learn 32 filters using a 3x3 kernel
+        tf.keras.layers.Conv2D(
+            32, (3, 3), activation="relu",
+        ),
+
+        # Max-pooling layer, using 2x2 pool size
+        tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+
+        # Flatten units
+        tf.keras.layers.Flatten(),
+
+        # Add a hidden layer with dropout
+        tf.keras.layers.Dense(128, activation="relu"),
+        tf.keras.layers.Dropout(0.5),
+
+        # Add an output layer with output units for all categories
+        tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax")
+        ])
+    
+    # Train neural network
+    model.compile(
+        optimizer="adam",
+        loss="categorical_crossentropy",
+        metrics=["accuracy"]
+    )
+
+    return model
+    #raise NotImplementedError
 
 if __name__ == "__main__":
     main()
