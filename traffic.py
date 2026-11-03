@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 EPOCHS = 10
 IMG_WIDTH = 30
 IMG_HEIGHT = 30
-NUM_CATEGORIES = 43
+NUM_CATEGORIES = 3
 TEST_SIZE = 0.4
 
 
@@ -80,7 +80,7 @@ def load_data(data_dir):
 
     # Normalize values 0 to 1 instead of 0 to 255
     images = np.array(images) / 255.0
-    
+
     return images, labels
     #raise NotImplementedError
 
@@ -113,7 +113,7 @@ def get_model():
         # Add an output layer with output units for all categories
         tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax")
         ])
-    
+
     # Train neural network
     model.compile(
         optimizer="adam",
